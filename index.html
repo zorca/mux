@@ -24,11 +24,14 @@
 
 <body>
 
-  <!-- Add your site or application content here -->
-  <video id="myVideo" controls></video>
+  <script>
+    window.muxPlayerInitTime = Date.now();
+  </script>
+  <video id="myVideo" controls width="960" height="400"></video>
 
   <!-- Use HLS.js to support the HLS format in browsers. -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
   <script>
     (function(){
       // Replace with your asset's playback ID
@@ -46,6 +49,37 @@
         hls.attachMedia(video);
       }
     })();
+
+    // Initialize Mux Data monitoring
+    if (typeof mux !== 'undefined') {
+      var vid = document.querySelector('#myVideo');
+      if (Hls.isSupported()) {
+        var hls = new Hls();
+        hls.loadSource('http://path/to/awesomeVideo/master.m3u8');
+        hls.attachMedia(vid);
+      }
+
+      mux.monitor('#myVideo', {
+        debug: false,
+
+        // Pass in the HLS.js instance
+        hlsjs: hls,
+
+        // Optionally, if Hls is not available on the window globally
+        // you need to pass Hls as well.
+        Hls: Hls,
+
+        data: {
+          env_key: 'annb2ncivoh0lefj7h99i79oe', // required
+
+          // Metadata
+          player_name: 'Custom Player', // ex: 'My Main Player'
+          player_init_time: window.muxPlayerInitTime // ex: 1451606400000
+
+          // ... and other metadata
+        }
+      });
+    }
   </script>
   <script src="js/vendor/modernizr-3.11.2.min.js"></script>
   <script src="js/plugins.js"></script>
